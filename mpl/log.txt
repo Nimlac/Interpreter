@@ -1,0 +1,195 @@
+i:is(5)
+j:is(10)
+k:is(M:mul(M:add(i:val(),j:val()),5))
+Sys:println(k:val())
+#
+i:is(hello )
+n:is(12)
+Sys:println(M:add(i:val(),S:string(n:val())))
+#
+Sys:println(while)
+i:is(10)
+Exp:while(Op:gr(i:val(),0),
+    Sys:println(i:val())
+    i:is(M:sub(i:val(),1))
+)
+Sys:println(for)
+Exp:for(n:is(10),Op:gr(n:val(),0),n:is(M:sub(n:val(),1)),
+    Sys:println(n:val())
+)
+#
+i:is(12)
+Sys:println(i:val())
+i:inc(3)
+Sys:println(i:val())
+i:mul(2)
+Exp:for(,Op:gr(i:val(),0),i:dec(),
+Sys:println(M:mul(2,i:val()))
+)
+#
+s:is(Sys:input())
+a:is(s:sp())
+Exp:for(i:is(0),Op:lt(i:val(),a:len()),i:inc(),
+    Sys:println(a:get(i:val()))
+)
+#
+a:is(Ar:new(1,23,4,asdfghjkl,haha,144))
+Exp:for(i:is(0),Op:lt(i:val(),a:len()),i:inc(),
+    Sys:println(a:get(i:val()))
+)
+#
+a:is(Ar:new(1,2,Ar:new(1,2),4))
+Sys:println(a:val())
+Sys:print(a:join(-))
+#
+s:is("9")
+Sys:println(s:val())
+n:is(Num:from(s:val()))
+Sys:println(n:val())
+s:is(S:string(n:val()))
+Sys:println(M:add(s:val(),"!"))
+#
+a:is(Ar:new("a","b","c","d"))
+a:add("e")
+Sys:println(a:sum())
+#
+a:is(Ar:new(1,2,Ar:new(1,2),4))x
+Sys:println(a:val())
+Sys:print(M:add(M:add("-<",a:join(">-=-<")),">-"))
+#
+t:is("hello world")
+Sys:println(t:val())
+x:is(M:add(t:val(),"!"))
+Sys:println(x:val())
+#
+a:is(Ar:new(1,2,3,4,5,6,7,8,9,10))
+Sys:println(a:val())
+a:map(x,M:mul(x:val(),2))
+Sys:println(a:val())
+a:filter(x,Op:gt(x:val(),10))
+Sys:println(a:val())
+Sys:println(a:all(x,Op:lt(x:val(),32)))
+Sys:println(a:any(x,Op:eq(x:val(),12)))
+Sys:println(a:all(x,Op:eq(x:val(),8)))
+Sys:println(a:sum())
+#
+fn:func(x,y,
+    M:add(M:mul(x:val(),y:val()),y:val())
+)
+i:is(fn:run(2,3))
+Sys:println(i:val())
+#
+
+f:func(x,
+Sys:println(x:val())
+)
+f:run(0)
+n:func(x,y,
+Sys:println(M:add(x:val(),y:val()))
+)
+n:run(2,3)
+#
+n:is(Num:from(Sys:input()))
+ma:is(999999)
+m:is(ma:val())
+Exp:for(i:is(0),Op:lt(i:val(),n:val()),i:inc(),
+	v:is(Num:from(Sys:input()))
+	a:is(v:val())
+	Exp:if(Op:lt(v:val(),0),
+	    a:is(M:mul(v:val(),-1))
+	)
+	Exp:if(Op:lt(a:val(),ma:val()),
+		ma:is(a:val())
+		m:is(v:val())
+	)
+	Exp:if(B:and(Op:eq(a:val(),ma:val()),Op:gt(v:val(),0)),
+		ma:is(a:val())
+		m:is(v:val())
+	)
+)
+Sys:println(m:val())
+#
+
+a:is(S:sp("1 2 3 4 5"))
+a:map(x,Num:from(x:val()))
+Exp:for(i:is(0),Op:lt(i:val(),a:len()),i:inc(),
+    Sys:println(a:join(" "))
+    a:map(x,M:add(x:val(),1))
+)
+#
+m:is(Num:maxval())
+Sys:println(m:val())
+mv:is(0)
+a:is(S:sp(Sys:input()," "))
+a:map(x,Num:from(x:val()))
+Exp:for(i:is(0),Op:lt(i:val(),a:len()),i:inc(),
+    x:is(a:get(i:val()))
+    xa:is(M:abs(x:val()))
+    Exp:if(B:or(Op:lt(x:val(),m:val()),B:and(Op:lt(x:val(),mv:val()),Op:eq(xa:val(),m:val()))),
+        m:is(xa:val())
+        mv:is(x:val())
+    )
+)
+Sys:println(mv:val())
+#
+fb:func(n,
+    Exp:for(i:is(1),Op:lt(i:val(),n:val()),i:inc(),
+        Exp:if(B:and(Op:eq(M:mod(i:val(),3),0),Op:eq(M:mod(i:val(),5),0)),
+            Sys:println("fizzbuzz")
+        ,
+            Exp:if(Op:eq(M:mod(i:val(),3),0),
+                Sys:println("fizz")
+            ,
+                Exp:if(Op:eq(M:mod(i:val(),5),0),
+                    Sys:println("buzz")
+                ,
+                    Sys:println(i:string())
+                )
+            )
+        )
+    )
+)
+fb:run(120)
+#
+
+
+
+
+
+
+
+
+
+#
+a:i(Ar:filter(
+    Ar:new(4,2,3,5,1,6),
+    x,
+    Op:eq(
+        0,
+        M:mod(
+            x:val(),
+            2
+        )
+    )
+))
+a:sort()
+Sys:println(a:val())
+b:is(Ar:new("a","d","b","e","c","f"))
+b:sort()
+Sys:println(b:val())
+#
+m:is(Num:maxval())
+Sys:println(m:val())
+mv:is(0)
+a:is(S:sp(Sys:input()," "))
+a:map(x,Num:from(x:val()))
+Exp:for(i:is(0),Op:lt(i:val(),a:len()),i:inc(),
+    x:is(a:get(i:val()))
+    xa:is(M:abs(x:val()))
+    Exp:if(B:or(Op:lt(xa:val(),m:val()),B:and(Op:lt(x:val(),mv:val()),Op:eq(xa:val(),m:val()))),
+        m:is(xa:val())
+        mv:is(x:val())
+    )
+)
+Sys:println(mv:val())
+#

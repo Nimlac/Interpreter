@@ -1,0 +1,73 @@
+ar:is("1 2 4 12 52 12 -2":sp():map(x, Num:from(x:val())))
+Sys:println("Smalles num is %1":fm(ar:min()))
+
+#
+Person:class(
+    name:var()
+    age:var()
+
+    ...eq:func(other,
+        B:and(
+            Op:eq(name:val(),other:co(name,val)),
+            Op:eq(age:val(),other:co(age,val))
+        )
+    )
+
+    ...new:func(_name,_age,
+        name:is(_name:val())
+        age:is(_age:val())
+    )
+
+    ...string:func(,
+        S:fm("%1 is %2 years old.",name:string(),age:string())
+    )
+
+    birthday:func(,
+        age:inc()
+    )
+
+    change_name:func(name,
+        name:is(name:val())
+    )
+)
+
+Name:class(
+    firstname:var()
+    lastname:var()
+
+    ...eq:func(other,
+        B:and(
+            Op:eq(firstname:val(),other:co(firstname,val)),
+            Op:eq(lastname:val(),other:co(lastname,val))
+        )
+    )
+
+    ...new:func(_firstname,_lastname,
+        firstname:is(_firstname:val())
+        lastname:is(_lastname:val())
+    )
+
+    ...string:func(,
+        S:fm("%1 %2",firstname:val(),lastname:val())
+    )
+
+    switch:func(,
+        h:is(firstname:val())
+        firstname:is(lastname:val())
+        lastname:is(h:val())
+    )
+)
+
+a:is(Person:new(Name:new("1st", "last"), 16.4))
+
+p:is(Person:new(Name:new("UwU", "*blush*"), 0.012))
+
+Sys:println(a:string())
+Sys:println(a:name:string())
+Sys:println(a:name:switch:run())
+Sys:println(a:string())
+Sys:println(a:name:string())
+
+Sys:println(p:string())
+
+Sys:println(a:name:lastname:val())

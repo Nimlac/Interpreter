@@ -1,0 +1,62 @@
+Person:class(
+    name:var()
+    age:var()
+
+    ...eq:func(other,
+        B:and(
+            Op:eq(name:val(),other:co(name,val)),
+            Op:eq(age:val(),other:co(age,val))
+        )
+    )
+
+    ...new:func(_name,_age,
+        name:is(_name:val())
+        age:is(_age:val())
+    )
+
+    ...string:func(,
+        S:fm("%1 is %2 years old",name:val(),age:string())
+    )
+
+    birthday:func(,
+        age:inc()
+    )
+
+    change_name:func(fname,lname,
+        name:is(M:add(fname:val()," ",lname:val()))
+    )
+)
+
+Teacher:class(Person,
+	prof:var()
+	money:var()
+	pay:var()
+
+	...new(_name, _age, _prof, _money ,_pay,
+		prof:is(_prof:val())
+		money:is(_money:val())
+		pay:is(_pay:val())
+
+		...base:new(_name:val(), _age:val())
+	)
+
+
+)
+
+p:is(Person:new("Hello",12))
+
+Sys:print("--end-")
+
+t:is(Teacher:new("Hi", 32, "Math", 12500, 12.5))
+#
+    ...string(,
+        S:fm("%1 and teaches %2 for %3/h they own %4$",
+            ...base:string(),
+            prof:val(),
+            pay:val(),
+            money:val())
+    )
+
+	work(h,
+		money:inc(M:mul(h:val(),payPerHour:val()))
+	)
