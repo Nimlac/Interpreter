@@ -5,7 +5,7 @@ from x_types import String
 
 class ClassObj:
     def __init__(self, inter, class_ref, args):
-        self._class = class_ref
+        self.class_ref = class_ref
         self.vars = class_ref.vars.copyEnv()
         self.funcs = class_ref.funcs.copyEnv()
         self._inter = inter
@@ -17,7 +17,7 @@ class ClassObj:
             # co:funcs(change_name, "New name") -> co.change_name:run("New name")   ^^
 
     def getclass(self):
-        return String(self._class.name)
+        return String(self.class_ref.name)
 
     def eval(self, text, varst=None, funcst=None):
         return self._inter.eval(text, self.vars, self.funcs, self)
@@ -26,13 +26,19 @@ class ClassObj:
         if '...string' in self.funcs:
             return self.funcs['...string'].run(self, args)
         else:
-            raise Exception(f"! {self._class.name} doesn't define -> string !")
+            raise Exception(f"! {self.class_ref.name} doesn't define -> string !")
+
+    def array(self, inter, args):
+        if '...array' in self.funcs:
+            return self.funcs['...array'].run(self, args)
+        else:
+            raise Exception(f"! {self.class_ref.name} doesn't define -> array !")
 
     def toNum(self, inter, args):
         if '...num' in self.funcs:
             return self.funcs['...num'].run(self, args)
         else:
-            raise Exception(f"! {self._class.name} doesn't define -> num !")
+            raise Exception(f"! {self.class_ref.name} doesn't define -> num !")
 
     def co_old(self, inter, args):
         warn("This method is deprecated and doesn't work with variables outside of the class", DeprecationWarning, stacklevel=2)
@@ -79,37 +85,43 @@ class ClassObj:
         if '...eq' in self.funcs:
             return self.funcs['...eq'].run(self, [other])
         else:
-            raise Exception(f"! {self._class.name} doesn't define eq !")
+            raise Exception(f"! {self.class_ref.name} doesn't define eq !")
 
     def __add__(self, other):
         if '...add' in self.funcs:
             return self.funcs['...add'].run(self, [other])
         else:
-            raise Exception(f"! {self._class.name} doesn't define add !")
+            raise Exception(f"! {self.class_ref.name} doesn't define add !")
 
     def __sub__(self, other):
         if '...sub' in self.funcs:
             return self.funcs['...sub'].run(self, [other])
         else:
-            raise Exception(f"! {self._class.name} doesn't define sub !")
+            raise Exception(f"! {self.class_ref.name} doesn't define sub !")
 
     def __mul__(self, other):
         if '...mul' in self.funcs:
             return self.funcs['...mul'].run(self, [other])
         else:
-            raise Exception(f"! {self._class.name} doesn't define mul !")
+            raise Exception(f"! {self.class_ref.name} doesn't define mul !")
 
     def __truediv__(self, other):
         if '...div' in self.funcs:
             return self.funcs['...div'].run(self, [other])
         else:
-            raise Exception(f"! {self._class.name} doesn't define div !")
+            raise Exception(f"! {self.class_ref.name} doesn't define div !")
 
     def __mod__(self, other):
         if '...mod' in self.funcs:
             return self.funcs['...mod'].run(self, [other])
         else:
-            raise Exception(f"! {self._class.name} doesn't define mod !")
+            raise Exception(f"! {self.class_ref.name} doesn't define mod !")
+
+    def __hash__(self):
+        if '...hash' in self.funcs:
+            return self.funcs['...mod'].run(self, [''])
+        else:
+            raise Exception(f"! {self.class_ref.name} doesn't define mod !")
 
 
 class Class:
@@ -118,8 +130,8 @@ class Class:
             raise Exception(f'! Invalid args in definition of class {name} !')
         if len(args) == 1:
             self.name = name
-            self.vars = Env()
-            self.funcs = Env()
+            self.vars = Env(cl=name)
+            self.funcs = Env(cl=name)
             inter.evalclass(self, args[0])
         else:
             c = inter.classes[args[0]]

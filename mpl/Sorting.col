@@ -1,0 +1,8 @@
+Sorting:lib(
+    SortbyHighest:func(ar,
+        ar:sort(x,x:val())
+    )
+    SortbyLowest:func(ar,
+        ar:sort(x,-x:val())
+    )
+)

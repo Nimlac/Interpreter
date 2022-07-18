@@ -1,0 +1,26 @@
+Corelib:lib(
+    ValuePair:class(
+        key:var()
+        value:var()
+
+        ...new:func(_key,_value,
+            key:is(_key:val())
+            value:is(_value:val())
+        )
+
+        ...eq:func(other,
+            B:and(
+                Op:eq(key:val(),other:key:val()),
+                Op:eq(value:val(),other:value:val())
+            )
+        )
+
+        ...string:func(,
+            S:fm("%1 -> %2",key:string(),value:string())
+        )
+
+        ...hash:func(,
+            Sys:hash(key:val(), value:val())
+        )
+    )
+)

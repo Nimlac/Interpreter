@@ -193,3 +193,12 @@ Exp:for(i:is(0),Op:lt(i:val(),a:len()),i:inc(),
 )
 Sys:println(mv:val())
 #
+s:is("A")
+Sys:print(s:val())
+n:is(M:add(S:ascii(s:val()),2))
+Sys:print(S:ascii(n:val()))
+n:dec(2)
+Sys:print(S:ascii(n:val()))
+n:inc()
+Sys:println(S:ascii(n:val()))
+#

@@ -1,4 +1,6 @@
+import copy
 import sys
+from x_exp import Exp
 
 
 class String:
@@ -9,6 +11,12 @@ class String:
             self._val = str(n)
         else:
             self.val = n
+
+    def __hash__(self):
+        return hash(self.val)
+
+    def array(self, inter, args):
+        return Array([String(c) for c in self.val])
 
     @property
     def val(self) -> str:
@@ -35,6 +43,23 @@ class String:
         return s
 
     @staticmethod
+    def s_ascii(inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:ascii !")
+        var = inter.eval(args[0])
+        if type(var) == Num:
+            if var.val.is_integer():
+                return String(chr(int(var.val)))
+            else:
+                raise Exception("! Invalid args for String:ascii !")
+        elif type(var) == String:
+            if len(var.val) != 1:
+                raise Exception("! Invalid args for String:ascii !")
+            return Num(ord(var.val))
+        else:
+            raise Exception("! Invalid args for String:ascii !")
+
+    @staticmethod
     def s_sp(inter, args):
         if len(args) == 1 and args[0] == '':
             raise Exception("! Invalid args for String:sp !")
@@ -45,7 +70,7 @@ class String:
     @staticmethod
     def s_rp(inter, args):
         if len(args) != 3:
-            raise Exception("! Invalid args for String:sp !")
+            raise Exception("! Invalid args for String:rp !")
         return String(inter.eval(args[0]).val.replace(inter.eval(args[1]).val, inter.eval(args[2]).val))
 
     @staticmethod
@@ -58,7 +83,7 @@ class String:
         return self.val
 
     def string(self, inter, args):
-        return str(self)
+        return self
 
     def fm(self, inter, args):
         if len(args) == 1 and args[0] == '':
@@ -68,6 +93,9 @@ class String:
             x = inter.eval(args[i])
             s = String.s_rp(inter, [s, String("%"+str(i+1)), x.string(inter, ['']) if type(x) != String else x])
         return s
+
+    def __contains__(self, item):
+        return item.val in self.val
 
     def __eq__(self, other):
         return Bool(self.val == other.val)
@@ -84,7 +112,7 @@ class String:
     def sp(self, inter, args):
         if len(args) != 1:
             raise Exception("! Invalid args for String:sp !")
-        return Array([String(inter.eval(x).string(inter, [''])) for x in
+        return Array([inter.eval(f'"{x}"') for x in
                       (str(self).split() if args[0] == '' else str(self).split(str(inter.eval(args[0]).string(inter, ['']))))])
 
     def rp(self, inter, args):
@@ -108,10 +136,67 @@ class String:
             raise Exception("! Invalid args for String:toNum !")
         return Num(float(self.val))
 
+    def len(self, inter, args):
+        if args[0] != '' or len(args) != 1:
+            raise Exception("! Invalid args for String:len !")
+        return Num(len(self.val))
+
+    def has(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:has !")
+        return Bool(inter.eval(args[0]) in self)
+
+    def sub(self, inter, args):
+        if len(args) != 2 or not (x := (inter.eval(args[0]) or Num(0)).val).is_integer() or not (y := (inter.eval(args[1]) or Num(len(self.val))).val).is_integer():
+            raise Exception("! Invalid args for String:sub !")
+        return String(self.val[int(x):int(y)])
+
+    def startswith(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:startswith !")
+        return Bool(self.val.startswith(inter.eval(args[0]).val))
+
+    def endswith(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:endswith !")
+        return Bool(self.val.endswith(inter.eval(args[0]).val))
+
+    def strip(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:strip !")
+        if args[0] == '':
+            return String(self.val.strip(' '))
+        else:
+            return String(self.val.strip(inter.eval(args[0]).val))
+
+    def lstrip(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:lstrip !")
+        if args[0] == '':
+            return String(self.val.lstrip(' '))
+        else:
+            return String(self.val.lstrip(inter.eval(args[0]).val))
+
+    def rstrip(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for String:rstrip !")
+        if args[0] == '':
+            return String(self.val.rstrip(' '))
+        else:
+            return String(self.val.rstrip(inter.eval(args[0]).val))
+
+    def to_char_array(self, inter, args):
+        if args[0] != '' or len(args) != 1:
+            raise Exception("! Invalid args for String:to_char_array !")
+        return Array([String(c) for c in self.val])
+
 
 class Num:
     def __init__(self, n):
         self._val = float(n)
+
+    def __hash__(self):
+        return hash(self.val)
 
     def inc(self, inter, args):
         if len(args) != 1:
@@ -209,6 +294,9 @@ class Bool:
     def __init__(self, b: bool):
         self._val = b
 
+    def __hash__(self):
+        return hash(self.val)
+
     @property
     def val(self) -> bool:
         return self._val
@@ -260,6 +348,14 @@ class Array:
             self._val = []
         else:
             self._val = args
+
+    def __hash__(self):
+        return hash(self.val)
+
+    def array(self, inter, args):
+        if len(args) != 1 or args[0] != '':
+            raise Exception("! Invalid args for array !")
+        return self
 
     @property
     def val(self):
@@ -342,7 +438,13 @@ class Array:
     def add(self, inter, args):
         if args[0] == '' and len(args) == 1:
             raise Exception("! Invalid args for Array:add !")
-        self.val += [inter.eval(arg) for arg in args]
+        self.val.append(copy.deepcopy(inter.eval(args[0])))
+        return self
+
+    def add_ref(self, inter, args):
+        if args[0] == '' and len(args) == 1:
+            raise Exception("! Invalid args for Array:add !")
+        self.val.append(inter.eval(args[0]))
         return self
 
     def rem(self, inter, args):
@@ -368,10 +470,15 @@ class Array:
             raise Exception("! Invalid args for Array:len !")
         return Num(len(self.val))
 
+    def has(self, inter, args):
+        if len(args) != 1:
+            raise Exception("! Invalid args for Array:has !")
+        return Bool(inter.eval(args[0]) in self.val)
+
     def join(self, inter, args):
         if len(args) != 1:
             raise Exception("! Invalid args for Array:join !")
-        return String(f'"{str(inter.eval(args[0]).string(inter, [""])).join(str(x.string(inter, [""])) for x in self.val)}"')
+        return String(f'{str(inter.eval(args[0]).string(inter, [""])).join(str(x.string(inter, [""])) for x in self.val)}')
 
     def map(self, inter, args):
         if len(args) > 1:
@@ -489,12 +596,58 @@ class Array:
         return self
 
 
+class Dict:
+    def __init__(self):
+        self.val = {}
+
+    def __hash__(self):
+        return hash(self.val)
+
+    @staticmethod
+    def dic_new(inter, args):
+        if len(args) != 1 or args[0] != '':
+            raise Exception("! Invalid args for Dictionary:new !")
+        return Dict()
+
+    def get(self, inter, args):  # a:get(key)
+        return self.val[inter.eval(args[0])]
+
+    def set(self, inter, args):  # a:set(key, value)
+        if len(args) != 2:
+            raise Exception("! Invalid args for Dictionary:set !")
+        self.val[inter.eval(args[0])] = inter.eval(args[1])
+
+    def has(self, inter, args) -> Bool:  # a:has(key) -> Bool
+        if len(args) != 1:
+            raise Exception("! Invalid args for Dictionary:has !")
+        return Bool(inter.eval(args[0]) in self.val)
+
+    def array(self, inter, args) -> Array:  # a:array() -> Array
+        if len(args) != 1 or args[0] != '':
+            raise Exception("! Invalid args for Dictionary:array !")
+        # todo funcs </>
+        return Array([inter.classes["ValuePair"].new(inter, [k, v]) for k, v in self.val.items()])
+
+    def string(self, inter, agrs) -> String:
+        if len(self.val) != 0:
+            return String('<{(' + '), ('.join([f"{k.string(inter, [''])} -> {v.string(inter, [''])}" for k, v in self.val.items()]) + ')}>')
+        return String('<{}>')
+
+
 class Func:
-    def __init__(self, inter, args):
+    def __init__(self, inter, args, private=False, cl=None):
         self.names = args[:-1] if len(args) != 1 and args[0] != '' else []
         self.code = args[-1]
+        self.private = private
+        self.cl = cl
+
+    def __call__(self, *args, **kwargs):
+        return self.run(args[0], args[1])
 
     def run(self, inter, args):
+        if self.private and (not hasattr(inter, 'class_ref') or inter.class_ref.name != self.cl.name):
+            raise Exception(f"! Cannot access private method of class {self.cl.name}!")
+
         if len(args) != len(self.names) and args[0] != '':
             raise Exception("! Invalid args for run !")
         inter.vars.add_layer()
@@ -502,6 +655,8 @@ class Func:
         for i in range(len(self.names)):
             inter.vars.add_var(str(self.names[i]), inter.eval(args[i]))
         val = inter.eval(self.code)
+        if type(val) == Exp and val.etype == -1:
+            val = val.value
         inter.vars.rem_layer()
         inter.funcs.rem_layer()
         return val
@@ -514,6 +669,11 @@ class Func:
         for i in range(len(self.names)):
             inter.vars.add_var(str(self.names[i]), args[i])
         val = inter.eval(self.code)
+        if type(val) == Exp and val.etype == -1:
+            val = val.value
         inter.vars.rem_layer()
         inter.funcs.rem_layer()
         return val
+
+
+import main

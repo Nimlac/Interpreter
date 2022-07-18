@@ -1,0 +1,25 @@
+Xcol:lib(
+    range:func(x,
+        ar:is(Ar:new())
+        Exp:for(i:is(0),Op:lt(i:val(),x:val()),i:inc(),
+            ar:add(i:val())
+        )
+        Exp:return(ar:val())
+    )
+
+    range2:func(x,y,
+        ar:is(Ar:new())
+        Exp:for(i:is(x:val()),Op:lt(i:val(),y:val()),i:inc(),
+            ar:add(i:val())
+        )
+        Exp:return(ar:val())
+    )
+
+    range3:func(x,y,z,
+        ar:is(Ar:new())
+        Exp:for(i:is(x:val()),Exp:if(Op:gt(z,0),Op:lt(i:val(),y:val()),Op:gt(i:val(),y:val())),i:inc(z:val()),
+            ar:add(i:val())
+        )
+        Exp:return(ar:val())
+    )
+)

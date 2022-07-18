@@ -1,0 +1,69 @@
+Persons:lib(
+    say:func(p,s,
+        Sys:println(S:fm("%1 says %2",p:name:string(),s:val()))
+    )
+
+    Name:class(
+        firstname:var()
+        lastname:var()
+
+        ...eq:func(other,
+            B:and(
+                Op:eq(firstname:val(),other:firstname:val()),
+                Op:eq(lastname:val(),other:lastname:val())
+            )
+        )
+
+        ...new:func(_firstname,_lastname,
+            firstname:is(_firstname:val())
+            lastname:is(_lastname:val())
+        )
+
+        ...string:func(,
+            S:fm("%1 %2",firstname:val(),lastname:val())
+        )
+
+        switch:func(,
+            h:is(firstname:val())
+            firstname:is(lastname:val())
+            lastname:is(h:val())
+        )
+    )
+
+    Person:class(
+        name:var()
+        age:var()
+
+        ...eq:func(other,
+            B:and(
+                Op:eq(name:val(),other:name:val()),
+                Op:eq(age:val(),other:age:val())
+            )
+        )
+
+        ...new:func(_name,_age,
+            name:is(_name:val())
+            age:is(_age:val())
+        )
+
+        ...string:func(,
+            format:run()
+        )
+
+        birthday:func(,
+            add_one_to_age:run()
+        )
+
+        format:pfunc(,
+            S:fm("%1 is %2 years old.",name:string(),age:string())
+        )
+
+        add_one_to_age:pfunc(,
+            age:inc()
+        )
+
+        change_name:func(name,
+            name:is(name:val())
+        )
+    )
+)
